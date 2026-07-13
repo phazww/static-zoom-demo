@@ -49,20 +49,12 @@ document.addEventListener("DOMContentLoaded", function () {
             // Проверяем поддержку CSS zoom (Firefox не поддерживает, остальные да)
             const supportsZoom = CSS.supports && CSS.supports("zoom", "1");
             
-            if (!supportsZoom) {
-                // Компенсация через transform: scale для Firefox
-                frame.style.width = (layoutZoom * 100) + "%";
-                frame.style.minHeight = (layoutZoom * 100) + "vh";
-                frame.style.transform = "scale(" + inv + ")";
-                frame.style.transformOrigin = "top left";
-            } else {
-                // Компенсация через zoom для Chrome/Safari/Edge/Opera/Yandex
-                frame.style.width = "100%";
-                frame.style.minHeight = (layoutZoom * 100) + "vh";
-                frame.style.zoom = inv;
-                frame.style.removeProperty("transform");
-                frame.style.removeProperty("transform-origin");
-            }
+            // Компенсация через transform: scale для всех браузеров (исключает баг с min-font-size в Chromium)
+            frame.style.width = (layoutZoom * 100) + "%";
+            frame.style.minHeight = (layoutZoom * 100) + "vh";
+            frame.style.transform = "scale(" + inv + ")";
+            frame.style.transformOrigin = "top left";
+            frame.style.removeProperty("zoom");
             
             // Стабилизируем скролл на основе масштаба верстки
             if (Math.abs(layoutZoom - lastLayoutZoom) > 0.01) {

@@ -49,16 +49,12 @@
                 if (frame) {
                     var inv = 1 / layoutZoom;
                     var supportsZoom = CSS.supports && CSS.supports("zoom", "1");
-                    if (!supportsZoom) {
-                        frame.style.width = (layoutZoom * 100) + "%";
-                        frame.style.minHeight = (layoutZoom * 100) + "vh";
-                        frame.style.transform = "scale(" + inv + ")";
-                        frame.style.transformOrigin = "top left";
-                    } else {
-                        frame.style.width = "100%";
-                        frame.style.minHeight = (layoutZoom * 100) + "vh";
-                        frame.style.zoom = inv;
-                    }
+                    // Компенсация через transform: scale для всех браузеров (исключает баг с min-font-size в Chromium)
+                    frame.style.width = (layoutZoom * 100) + "%";
+                    frame.style.minHeight = (layoutZoom * 100) + "vh";
+                    frame.style.transform = "scale(" + inv + ")";
+                    frame.style.transformOrigin = "top left";
+                    frame.style.removeProperty("zoom");
                     // Показываем фрейм уже с примененным скейлом
                     frame.style.opacity = "1";
                 }
@@ -105,12 +101,12 @@
                     <table class="demo-table">
                         <thead>
                             <tr>
-                                <th style="width: 250px;">Название вакансии</th>
-                                <th style="width: 250px;">Работодатель / ИНН</th>
-                                <th style="width: 180px;">Контакты</th>
-                                <th style="width: 320px;">Обязанности (проверка переноса слов)</th>
-                                <th style="width: 130px;">Статус</th>
-                                <th style="width: 150px;">Действие</th>
+                                <th style="width: 22%;">Название вакансии</th>
+                                <th style="width: 20%;">Работодатель / ИНН</th>
+                                <th style="width: 18%;">Контакты</th>
+                                <th style="width: 25%;">Обязанности (проверка переноса слов)</th>
+                                <th style="width: 8%;">Статус</th>
+                                <th style="width: 7%;">Действие</th>
                             </tr>
                         </thead>
                         <tbody>
