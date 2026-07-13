@@ -37,7 +37,7 @@
                 }
                 
                 // 2. Различаем режим "Только текст" (Firefox) и обычный зум страницы
-                var isTextOnlyZoom = textZoomFactor > 1.05;
+                var isTextOnlyZoom = Math.abs(textZoomFactor - 1) > 0.05;
                 var layoutZoom = isTextOnlyZoom ? 1 : browserZoom;
                 var fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
                 

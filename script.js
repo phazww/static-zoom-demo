@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const currentScrollY = window.scrollY;
 
         // Различаем режим "Только текст" (Firefox) и обычный зум страницы
-        const isTextOnlyZoom = textZoomFactor > 1.05;
+        const isTextOnlyZoom = Math.abs(textZoomFactor - 1) > 0.05;
         const layoutZoom = isTextOnlyZoom ? 1 : browserZoom;
         const fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
 
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const width = entry.contentRect.width;
                 if (width > 0) {
                     const textZoomFactor = width / 1000;
-                    const isTextOnlyZoom = textZoomFactor > 1.05;
+                    const isTextOnlyZoom = Math.abs(textZoomFactor - 1) > 0.05;
                     const fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
                     
                     if (isNeutralizerActive) {
