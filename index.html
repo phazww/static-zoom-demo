@@ -51,18 +51,30 @@
                 var wrapper = document.getElementById("zoomWrapper");
                 if (frame) {
                     var inv = 1 / layoutZoom;
-                    // Компенсация через transform: scale для всех браузеров (исключает баг с min-font-size в Chromium)
-                    frame.style.width = (layoutZoom * 100) + "%";
-                    frame.style.minHeight = (layoutZoom * 100) + "vh";
-                    frame.style.transform = "scale(" + inv + ")";
-                    frame.style.transformOrigin = "top left";
-                    frame.style.removeProperty("zoom");
-                    
-                    if (wrapper) {
-                        // Жестко фиксируем физическую высоту обертки по визуальной высоте фрейма.
-                        // Это полностью устраняет парадокс отсечения и бесконечных скроллбаров.
-                        var rect = frame.getBoundingClientRect();
-                        wrapper.style.height = rect.height + "px";
+                    var supportsZoom = CSS.supports && CSS.supports("zoom", "1");
+                    if (!supportsZoom) {
+                        // Компенсация через transform: scale для Firefox (не поддерживает zoom)
+                        frame.style.width = (layoutZoom * 100) + "%";
+                        frame.style.minHeight = (layoutZoom * 100) + "vh";
+                        frame.style.transform = "scale(" + inv + ")";
+                        frame.style.transformOrigin = "top left";
+                        frame.style.removeProperty("zoom");
+                        
+                        if (wrapper) {
+                            var rect = frame.getBoundingClientRect();
+                            wrapper.style.height = rect.height + "px";
+                        }
+                    } else {
+                        // Компенсация через zoom для Chrome/Yandex/Safari/Edge (идеальная четкость)
+                        frame.style.width = "100%";
+                        frame.style.minHeight = (layoutZoom * 100) + "vh";
+                        frame.style.zoom = inv;
+                        frame.style.removeProperty("transform");
+                        frame.style.removeProperty("transform-origin");
+                        
+                        if (wrapper) {
+                            wrapper.style.removeProperty("height");
+                        }
                     }
                     
                     // Показываем фрейм уже с примененным скейлом

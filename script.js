@@ -47,17 +47,32 @@ document.addEventListener("DOMContentLoaded", function () {
             const inv = 1 / layoutZoom;
             const wrapper = document.getElementById("zoomWrapper");
             
-            // Компенсация через transform: scale для всех браузеров (исключает баг с min-font-size в Chromium)
-            frame.style.width = (layoutZoom * 100) + "%";
-            frame.style.minHeight = (layoutZoom * 100) + "vh";
-            frame.style.transform = "scale(" + inv + ")";
-            frame.style.transformOrigin = "top left";
-            frame.style.removeProperty("zoom");
+            // Проверяем поддержку CSS zoom (Firefox не поддерживает, остальные да)
+            const supportsZoom = CSS.supports && CSS.supports("zoom", "1");
             
-            if (wrapper) {
-                // Жестко фиксируем физическую высоту обертки по визуальной высоте фрейма
-                const rect = frame.getBoundingClientRect();
-                wrapper.style.height = rect.height + "px";
+            if (!supportsZoom) {
+                // Компенсация через transform: scale для Firefox
+                frame.style.width = (layoutZoom * 100) + "%";
+                frame.style.minHeight = (layoutZoom * 100) + "vh";
+                frame.style.transform = "scale(" + inv + ")";
+                frame.style.transformOrigin = "top left";
+                frame.style.removeProperty("zoom");
+                
+                if (wrapper) {
+                    const rect = frame.getBoundingClientRect();
+                    wrapper.style.height = rect.height + "px";
+                }
+            } else {
+                // Компенсация через zoom для Chrome/Safari/Edge/Opera/Yandex
+                frame.style.width = "100%";
+                frame.style.minHeight = (layoutZoom * 100) + "vh";
+                frame.style.zoom = inv;
+                frame.style.removeProperty("transform");
+                frame.style.removeProperty("transform-origin");
+                
+                if (wrapper) {
+                    wrapper.style.removeProperty("height");
+                }
             }
             
             // Стабилизируем скролл на основе масштаба верстки
