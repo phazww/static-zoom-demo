@@ -94,6 +94,18 @@ document.addEventListener("DOMContentLoaded", function () {
         lastLayoutZoom = layoutZoom;
     }
 
+    // Кадровая фильтрация (requestAnimationFrame throttling) для предотвращения тряски
+    let updateTick = false;
+    function queueUpdateLayout() {
+        if (!updateTick) {
+            updateTick = true;
+            requestAnimationFrame(() => {
+                updateLayout();
+                updateTick = false;
+            });
+        }
+    }
+
     // Быстрый ResizeObserver для моментального отслеживания изменения размера шрифта без лагов
     const probe = document.getElementById("text-zoom-probe");
     if (probe && typeof ResizeObserver !== "undefined") {
@@ -111,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     if (textZoomVal) textZoomVal.textContent = textZoomFactor.toFixed(2) + "x";
                     
-                    updateLayout();
+                    queueUpdateLayout();
                 }
             }
         });
@@ -119,13 +131,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Слушатели событий масштабирования
-    window.addEventListener("resize", updateLayout);
+    window.addEventListener("resize", queueUpdateLayout);
     if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", updateLayout);
+        window.visualViewport.addEventListener("resize", queueUpdateLayout);
     }
     
     // Регулярная проверка на случай, если события resize не сработали
-    setInterval(updateLayout, 1000);
+    setInterval(queueUpdateLayout, 1000);
 
     // Инициализация при первой загрузке
     updateLayout();
