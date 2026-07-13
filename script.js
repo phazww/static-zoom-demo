@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let isTextOnlyZoom = false;
     let isInitialized = false;
     let modeTimeout = null;
+    let physicalWidth = window.innerWidth * (window.devicePixelRatio || 1);
+    let baseWidth = window.innerWidth;
+    let baseHeight = window.innerHeight;
 
     // Функция обновления и компенсации масштаба
     function updateLayout() {
@@ -35,14 +38,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!frame) return;
 
-        // Сохраняем текущую позицию скролла для компенсации прыжка
-        const currentScrollY = window.scrollY;
+        // Отслеживаем реальный ресайз окна (а не изменение масштаба зума)
+        const currentPhysicalWidth = window.innerWidth * browserZoom;
+        if (Math.abs(currentPhysicalWidth - physicalWidth) > 5) {
+            physicalWidth = currentPhysicalWidth;
+            baseWidth = window.innerWidth * (isTextOnlyZoom ? 1 : browserZoom);
+            baseHeight = window.innerHeight * (isTextOnlyZoom ? 1 : browserZoom);
+        }
 
         // Различаем режим "Только текст" (Firefox) и обычный зум страницы стабильно
         const targetMode = Math.abs(textZoomFactor - 1) > 0.05;
         if (!isInitialized) {
             isTextOnlyZoom = targetMode;
             isInitialized = true;
+            baseWidth = window.innerWidth * (isTextOnlyZoom ? 1 : browserZoom);
+            baseHeight = window.innerHeight * (isTextOnlyZoom ? 1 : browserZoom);
         } else if (targetMode !== isTextOnlyZoom) {
             clearTimeout(modeTimeout);
             modeTimeout = setTimeout(() => {
@@ -65,9 +75,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const supportsZoom = CSS.supports && CSS.supports("zoom", "1");
             
             if (!supportsZoom) {
-                // Компенсация через transform: scale для Firefox
-                frame.style.width = (window.innerWidth * layoutZoom) + "px";
-                frame.style.minHeight = (window.innerHeight * layoutZoom) + "px";
+                // Компенсация через transform: scale для Firefox (фиксированные базовые размеры исключают сдвиги)
+                frame.style.width = baseWidth + "px";
+                frame.style.minHeight = baseHeight + "px";
                 frame.style.transform = "scale(" + inv + ")";
                 frame.style.transformOrigin = "top left";
                 frame.style.removeProperty("zoom");
@@ -91,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
             // Стабилизируем скролл на основе масштаба верстки (только для Firefox)
             if (!supportsZoom && Math.abs(layoutZoom - lastLayoutZoom) > 0.01) {
+                const currentScrollY = window.scrollY;
                 const targetScrollY = currentScrollY * (lastLayoutZoom / layoutZoom);
                 window.scrollTo(0, targetScrollY);
             }

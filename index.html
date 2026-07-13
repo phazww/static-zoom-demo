@@ -51,11 +51,14 @@
                 var wrapper = document.getElementById("zoomWrapper");
                 if (frame) {
                     var inv = 1 / layoutZoom;
+                    var baseWidth = window.innerWidth * layoutZoom;
+                    var baseHeight = window.innerHeight * layoutZoom;
+                    
                     var supportsZoom = CSS.supports && CSS.supports("zoom", "1");
                     if (!supportsZoom) {
-                        // Компенсация через transform: scale для Firefox (не поддерживает zoom)
-                        frame.style.width = (window.innerWidth * layoutZoom) + "px";
-                        frame.style.minHeight = (window.innerHeight * layoutZoom) + "px";
+                        // Компенсация через transform: scale для Firefox (фиксированная базовая ширина исключает сдвиги)
+                        frame.style.width = baseWidth + "px";
+                        frame.style.minHeight = baseHeight + "px";
                         frame.style.transform = "scale(" + inv + ")";
                         frame.style.transformOrigin = "top left";
                         frame.style.removeProperty("zoom");
