@@ -12,6 +12,20 @@
 <body>
     <!-- Зонд для определения масштабирования текста в Firefox (Zoom Text Only) -->
     <div id="text-zoom-probe" style="position: absolute; visibility: hidden; width: 1em; font-size: 100px; padding: 0; border: 0; line-height: 1; pointer-events: none;"></div>
+    
+    <!-- Моментальная компенсация размера шрифтов до первой отрисовки (устраняет мигание крупного текста) -->
+    <script>
+        (function() {
+            var probe = document.getElementById("text-zoom-probe");
+            if (probe) {
+                var computedFontSize = parseFloat(window.getComputedStyle(probe).fontSize);
+                if (Number.isFinite(computedFontSize) && computedFontSize > 0) {
+                    var textZoomFactor = computedFontSize / 100;
+                    document.documentElement.style.setProperty("--text-zoom-factor", textZoomFactor);
+                }
+            }
+        })();
+    </script>
 
     <div id="zoomFrame">
         <header class="demo-header">
