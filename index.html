@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Демонстрация статической вёрстки (Zoom Neutralization)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Зонд для определения масштабирования текста в Firefox (Zoom Text Only) -->
+    <div id="text-zoom-probe" style="position: absolute; visibility: hidden; width: 1em; font-size: 100px; padding: 0; border: 0; line-height: 1; pointer-events: none;"></div>
+
+    <div id="zoomFrame">
+        <header class="demo-header">
+            <div class="header-content">
+                <h1>Технология «Статичный дизайн»</h1>
+                <p class="subtitle">Демонстрация стабильной геометрии интерфейса при зуме (Ctrl+/Ctrl-) и в режиме Firefox «Только текст»</p>
+            </div>
+            
+            <div class="control-panel">
+                <div class="panel-section">
+                    <span class="status-label">Эффект компенсации:</span>
+                    <button type="button" id="toggle-neutralizer" class="btn btn-primary active">АКТИВЕН (Статика)</button>
+                </div>
+                <div class="panel-section stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Масштаб браузера:</span>
+                        <span id="zoom-value" class="stat-value">100%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Масштаб текста (Firefox):</span>
+                        <span id="text-zoom-value" class="stat-value">1.00x</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="demo-main">
+            <section class="info-section">
+                <h2>Как проверить эффект?</h2>
+                <ol>
+                    <li>Попробуйте изменить масштаб страницы с помощью <strong>Ctrl +</strong> и <strong>Ctrl -</strong>.</li>
+                    <li>Обратите внимание: при активной компенсации вся верстка (кнопки, таблицы, тексты) остается <strong>абсолютно статичной на экране</strong>. Нет никаких сдвигов, прыжков или переносов строк.</li>
+                    <li>В Firefox зайдите в <em>Вид -> Масштаб -> Только текст</em> и поменяйте масштаб. Текст останется стабильным и не сломает дизайн.</li>
+                    <li>Выделите и скопируйте любой текст в таблице ниже — это <strong>чистый HTML-текст</strong>, а не картинки или SVG.</li>
+                </ol>
+            </section>
+
+            <section class="table-section">
+                <h2>Пример стабильной таблицы</h2>
+                <div class="table-wrapper">
+                    <table class="demo-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 250px;">Вакансия</th>
+                                <th style="width: 200px;">Компания / ИНН</th>
+                                <th style="width: 150px;">Телефон / Email</th>
+                                <th style="width: 250px;">Обязанности (Проверка переноса)</th>
+                                <th style="width: 120px;">Статус</th>
+                                <th style="width: 150px;">Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-bold">Ведущий веб-разработчик</td>
+                                <td>
+                                    <div class="company-name">ООО «Антигравитация»</div>
+                                    <div class="company-inn">ИНН 7701234567</div>
+                                </td>
+                                <td>
+                                    <div>+7 (999) 123-45-67</div>
+                                    <div class="text-secondary">job@antigravity.ai</div>
+                                </td>
+                                <td class="text-desc">Разработка адаптивных интерфейсов, оптимизация производительности, обеспечение pixel-perfect совпадения с макетом.</td>
+                                <td><span class="badge badge-success">Активна</span></td>
+                                <td><button type="button" class="btn-action">Копировать</button></td>
+                            </tr>
+                            <tr class="alt-row">
+                                <td class="font-bold">Фронтенд-инженер (Senior)</td>
+                                <td>
+                                    <div class="company-name">АО «Инновационные Системы»</div>
+                                    <div class="company-inn">ИНН 5260987654</div>
+                                </td>
+                                <td>
+                                    <div>+7 (831) 456-78-90</div>
+                                    <div class="text-secondary">hr@innovations.ru</div>
+                                </td>
+                                <td class="text-desc">Поддержка стабильного дизайна, кроссбраузерное тестирование в 6 браузерах, рефакторинг легаси кода.</td>
+                                <td><span class="badge badge-warning">На модерации</span></td>
+                                <td><button type="button" class="btn-action">Копировать</button></td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold">QA Специалист по верстке</td>
+                                <td>
+                                    <div class="company-name">ИП Иванов А.В.</div>
+                                    <div class="company-inn">ИНН 500102030405</div>
+                                </td>
+                                <td>
+                                    <div>+7 (903) 777-88-99</div>
+                                    <div class="text-secondary">ivanov@test.ru</div>
+                                </td>
+                                <td class="text-desc">Проверка соответствия макетам через Perfectpixel, поиск микросдвигов при масштабировании, ручное тестирование.</td>
+                                <td><span class="badge badge-success">Активна</span></td>
+                                <td><button type="button" class="btn-action">Копировать</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="controls-section">
+                <h2>Формы и интерактивные элементы</h2>
+                <div class="controls-grid">
+                    <div class="control-box">
+                        <label class="control-label">Выбор направления:</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="direction" checked>
+                                <span>Разработка</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="direction">
+                                <span>Аналитика</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="direction">
+                                <span>Тестирование</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-box">
+                        <label class="control-label">Параметры фильтрации:</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                <span>Только с откликами</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox">
+                                <span>Без HTML-тегов</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-box">
+                        <label class="control-label">Копирование и вставка (Тест буфера):</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="test-input" placeholder="Вставьте скопированный текст сюда..." value="">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="demo-footer-text">
+            Разработано на чистом HTML, CSS, JS без библиотек и сборщиков. Статичность: 100%.
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
