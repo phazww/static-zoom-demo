@@ -70,6 +70,8 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    height: 200px;
+    box-sizing: border-box;
 }
 
 .header-content h1 {
@@ -173,6 +175,8 @@ body {
     border-radius: 12px;
     border: 1px solid var(--color-border);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    height: 235px;
+    box-sizing: border-box;
 }
 
 .info-section h2 {
