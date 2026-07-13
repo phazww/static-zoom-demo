@@ -83,6 +83,30 @@ document.addEventListener("DOMContentLoaded", function () {
         lastLayoutZoom = layoutZoom;
     }
 
+    // Быстрый ResizeObserver для моментального отслеживания изменения размера шрифта без лагов
+    const probe = document.getElementById("text-zoom-probe");
+    if (probe && typeof ResizeObserver !== "undefined") {
+        const observer = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                // width = 10 * 100 * textZoomFactor = 1000 * textZoomFactor
+                const width = entry.contentRect.width;
+                if (width > 0) {
+                    const textZoomFactor = width / 1000;
+                    const isTextOnlyZoom = textZoomFactor > 1.05;
+                    const fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
+                    
+                    if (isNeutralizerActive) {
+                        document.documentElement.style.setProperty("--text-zoom-factor", fontCompensation);
+                    }
+                    if (textZoomVal) textZoomVal.textContent = textZoomFactor.toFixed(2) + "x";
+                    
+                    updateLayout();
+                }
+            }
+        });
+        observer.observe(probe);
+    }
+
     // Слушатели событий масштабирования
     window.addEventListener("resize", updateLayout);
     if (window.visualViewport) {

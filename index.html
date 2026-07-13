@@ -18,32 +18,40 @@
 </head>
 <body>
     <!-- Зонд для определения масштабирования текста в Firefox (Zoom Text Only) -->
-    <div id="text-zoom-probe" style="position: absolute; visibility: hidden; width: 1em; font-size: 100px; padding: 0; border: 0; line-height: 1; pointer-events: none;"></div>
+    <div id="text-zoom-probe" style="position: absolute; top: -9999px; left: -9999px; font-size: 100px; width: 10em; height: 10em; opacity: 0.01; pointer-events: none;"></div>
     
     <div id="zoomFrame">
         <!-- Моментальная компенсация зума и размера шрифтов до первой отрисовки (устраняет мигание верстки при загрузке) -->
         <script>
             (function() {
                 var browserZoom = window.devicePixelRatio || 1;
-                var inv = 1 / browserZoom;
                 
-                // 1. Компенсация размера шрифтов (Firefox Zoom Text Only)
+                // 1. Считываем масштабирование текста (Firefox Zoom Text Only)
                 var probe = document.getElementById("text-zoom-probe");
+                var textZoomFactor = 1;
                 if (probe) {
                     var computedFontSize = parseFloat(window.getComputedStyle(probe).fontSize);
                     if (Number.isFinite(computedFontSize) && computedFontSize > 0) {
-                        var textZoomFactor = computedFontSize / 100;
-                        document.documentElement.style.setProperty("--text-zoom-factor", textZoomFactor);
+                        textZoomFactor = computedFontSize / 100;
                     }
                 }
                 
-                // 2. Компенсация масштаба всей страницы
+                // 2. Различаем режим "Только текст" (Firefox) и обычный зум страницы
+                var isTextOnlyZoom = textZoomFactor > 1.05;
+                var layoutZoom = isTextOnlyZoom ? 1 : browserZoom;
+                var fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
+                
+                // Устанавливаем переменную компенсации текста
+                document.documentElement.style.setProperty("--text-zoom-factor", fontCompensation);
+                
+                // 3. Компенсация масштаба всей страницы
                 var frame = document.getElementById("zoomFrame");
                 if (frame) {
+                    var inv = 1 / layoutZoom;
                     var supportsZoom = CSS.supports && CSS.supports("zoom", "1");
                     if (!supportsZoom) {
-                        frame.style.width = (browserZoom * 100) + "%";
-                        frame.style.minHeight = (browserZoom * 100) + "vh";
+                        frame.style.width = (layoutZoom * 100) + "%";
+                        frame.style.minHeight = (layoutZoom * 100) + "vh";
                         frame.style.transform = "scale(" + inv + ")";
                         frame.style.transformOrigin = "top left";
                     } else {
