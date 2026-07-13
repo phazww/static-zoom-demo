@@ -8,6 +8,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Предотвращает мигание масштаба при первой отрисовке */
+        #zoomFrame {
+            opacity: 0;
+            transition: opacity 0.05s ease-in;
+        }
+    </style>
 </head>
 <body>
     <!-- Зонд для определения масштабирования текста в Firefox (Zoom Text Only) -->
@@ -44,6 +51,8 @@
                         frame.style.minHeight = "100vh";
                         frame.style.zoom = inv;
                     }
+                    // Показываем фрейм уже с примененным скейлом
+                    frame.style.opacity = "1";
                 }
             })();
         </script>
