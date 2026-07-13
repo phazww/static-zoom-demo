@@ -38,7 +38,7 @@ body {
     background-color: var(--color-bg-base);
 }
 
-/* Фрейм нейтрализации зума */
+/* Фрейм нейтрализации зума (растянут на всю ширину без обрезки полей) */
 #zoomFrame {
     width: 100%;
     min-height: 100vh;
@@ -46,8 +46,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 30px;
-    margin: 0 auto;
-    max-width: 1200px;
+    margin: 0;
+    max-width: none;
 }
 
 /* Шапка демо-страницы */
@@ -87,7 +87,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    min-width: 320px;
+    min-width: 340px;
 }
 
 .panel-section {

@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!supportsZoom) {
                 // Компенсация через transform: scale для Firefox
                 frame.style.transform = "scale(" + inv + ")";
-                frame.style.transformOrigin = "top center";
+                frame.style.transformOrigin = "top left";
                 frame.style.width = (browserZoom * 100) + "%";
                 // Корректируем высоту, чтобы не было пустых полей внизу
                 frame.style.minHeight = (browserZoom * 100) + "vh";
