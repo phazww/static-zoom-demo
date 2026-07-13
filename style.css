@@ -26,7 +26,12 @@ html {
     min-height: 100%;
     background-color: var(--color-bg-base);
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
 }
 
 body {
