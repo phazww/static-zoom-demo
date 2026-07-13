@@ -66,8 +66,8 @@ document.addEventListener("DOMContentLoaded", function () {
             
             if (!supportsZoom) {
                 // Компенсация через transform: scale для Firefox
-                frame.style.width = (layoutZoom * 100) + "%";
-                frame.style.minHeight = (layoutZoom * 100) + "vh";
+                frame.style.width = (window.innerWidth * layoutZoom) + "px";
+                frame.style.minHeight = (window.innerHeight * layoutZoom) + "px";
                 frame.style.transform = "scale(" + inv + ")";
                 frame.style.transformOrigin = "top left";
                 frame.style.removeProperty("zoom");
