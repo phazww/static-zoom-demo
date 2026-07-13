@@ -92,7 +92,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    min-width: 340px;
+    min-width: 380px;
 }
 
 .panel-section {
@@ -115,6 +115,7 @@ body {
 .stat-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
 }
 
@@ -128,6 +129,8 @@ body {
     font-family: monospace;
     font-size: 0.95rem;
     color: #38bdf8;
+    width: 60px;
+    text-align: right;
 }
 
 /* Кнопки */
