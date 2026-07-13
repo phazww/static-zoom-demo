@@ -75,8 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
             
-            // Стабилизируем скролл на основе масштаба верстки
-            if (Math.abs(layoutZoom - lastLayoutZoom) > 0.01) {
+            // Стабилизируем скролл на основе масштаба верстки (только для Firefox)
+            if (!supportsZoom && Math.abs(layoutZoom - lastLayoutZoom) > 0.01) {
                 const targetScrollY = currentScrollY * (lastLayoutZoom / layoutZoom);
                 window.scrollTo(0, targetScrollY);
             }
