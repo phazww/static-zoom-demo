@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const testInput = document.getElementById("test-input");
     const frame = document.getElementById("zoomFrame");
 
+    let lastZoom = window.devicePixelRatio || 1;
+
     // Функция обновления и компенсации масштаба
     function updateLayout() {
         // 1. Считываем масштаб браузера / Windows
@@ -28,6 +30,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (textZoomVal) textZoomVal.textContent = textZoomFactor.toFixed(2) + "x";
 
         if (!frame) return;
+
+        // Сохраняем текущую позицию скролла для компенсации прыжка
+        const currentScrollY = window.scrollY;
 
         if (isNeutralizerActive) {
             // Устанавливаем переменную компенсации текста для rem-шрифтов
@@ -53,6 +58,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 frame.style.removeProperty("width");
                 frame.style.removeProperty("min-height");
             }
+            
+            // Стабилизируем скролл: новое положение = старое положение * (предыдущий_зум / новый_зум)
+            if (Math.abs(browserZoom - lastZoom) > 0.01) {
+                const targetScrollY = currentScrollY * (lastZoom / browserZoom);
+                window.scrollTo(0, targetScrollY);
+            }
         } else {
             // Выключаем компенсацию, возвращаем к стандартному поведению браузера
             document.documentElement.style.setProperty("--text-zoom-factor", 1);
@@ -62,6 +73,8 @@ document.addEventListener("DOMContentLoaded", function () {
             frame.style.removeProperty("width");
             frame.style.removeProperty("min-height");
         }
+
+        lastZoom = browserZoom;
     }
 
     // Слушатели событий масштабирования
