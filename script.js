@@ -43,16 +43,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // Проверяем поддержку CSS zoom (Firefox не поддерживает, остальные да)
             const supportsZoom = CSS.supports && CSS.supports("zoom", "1");
             
-            // Всегда устанавливаем компенсированную ширину и высоту для стабильной геометрии
-            frame.style.width = (browserZoom * 100) + "%";
-            frame.style.minHeight = (browserZoom * 100) + "vh";
-
             if (!supportsZoom) {
                 // Компенсация через transform: scale для Firefox
+                frame.style.width = (browserZoom * 100) + "%";
+                frame.style.minHeight = (browserZoom * 100) + "vh";
                 frame.style.transform = "scale(" + inv + ")";
                 frame.style.transformOrigin = "top left";
             } else {
                 // Компенсация через zoom для Chrome/Safari/Edge/Opera/Yandex
+                frame.style.width = "100%";
+                frame.style.minHeight = "100vh";
                 frame.style.zoom = inv;
                 frame.style.removeProperty("transform");
                 frame.style.removeProperty("transform-origin");
