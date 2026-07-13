@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const frame = document.getElementById("zoomFrame");
 
     let lastZoom = window.devicePixelRatio || 1;
+    let lastLayoutZoom = 1;
 
     // Функция обновления и компенсации масштаба
     function updateLayout() {
@@ -34,19 +35,24 @@ document.addEventListener("DOMContentLoaded", function () {
         // Сохраняем текущую позицию скролла для компенсации прыжка
         const currentScrollY = window.scrollY;
 
+        // Различаем режим "Только текст" (Firefox) и обычный зум страницы
+        const isTextOnlyZoom = textZoomFactor > 1.05;
+        const layoutZoom = isTextOnlyZoom ? 1 : browserZoom;
+        const fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
+
         if (isNeutralizerActive) {
             // Устанавливаем переменную компенсации текста для rem-шрифтов
-            document.documentElement.style.setProperty("--text-zoom-factor", textZoomFactor);
+            document.documentElement.style.setProperty("--text-zoom-factor", fontCompensation);
 
-            const inv = 1 / browserZoom;
+            const inv = 1 / layoutZoom;
             
             // Проверяем поддержку CSS zoom (Firefox не поддерживает, остальные да)
             const supportsZoom = CSS.supports && CSS.supports("zoom", "1");
             
             if (!supportsZoom) {
                 // Компенсация через transform: scale для Firefox
-                frame.style.width = (browserZoom * 100) + "%";
-                frame.style.minHeight = (browserZoom * 100) + "vh";
+                frame.style.width = (layoutZoom * 100) + "%";
+                frame.style.minHeight = (layoutZoom * 100) + "vh";
                 frame.style.transform = "scale(" + inv + ")";
                 frame.style.transformOrigin = "top left";
             } else {
@@ -58,9 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 frame.style.removeProperty("transform-origin");
             }
             
-            // Стабилизируем скролл: новое положение = старое положение * (предыдущий_зум / новый_зум)
-            if (Math.abs(browserZoom - lastZoom) > 0.01) {
-                const targetScrollY = currentScrollY * (lastZoom / browserZoom);
+            // Стабилизируем скролл на основе масштаба верстки
+            if (Math.abs(layoutZoom - lastLayoutZoom) > 0.01) {
+                const targetScrollY = currentScrollY * (lastLayoutZoom / layoutZoom);
                 window.scrollTo(0, targetScrollY);
             }
         } else {
@@ -74,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         lastZoom = browserZoom;
+        lastLayoutZoom = layoutZoom;
     }
 
     // Слушатели событий масштабирования
