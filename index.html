@@ -56,7 +56,7 @@
                         frame.style.transformOrigin = "top left";
                     } else {
                         frame.style.width = "100%";
-                        frame.style.minHeight = "100vh";
+                        frame.style.minHeight = (layoutZoom * 100) + "vh";
                         frame.style.zoom = inv;
                     }
                     // Показываем фрейм уже с примененным скейлом

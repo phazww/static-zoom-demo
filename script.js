@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 // Компенсация через zoom для Chrome/Safari/Edge/Opera/Yandex
                 frame.style.width = "100%";
-                frame.style.minHeight = "100vh";
+                frame.style.minHeight = (layoutZoom * 100) + "vh";
                 frame.style.zoom = inv;
                 frame.style.removeProperty("transform");
                 frame.style.removeProperty("transform-origin");
