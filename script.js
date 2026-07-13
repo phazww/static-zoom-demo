@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let lastZoom = window.devicePixelRatio || 1;
     let lastLayoutZoom = 1;
+    let isTextOnlyZoom = false;
+    let isInitialized = false;
+    let modeTimeout = null;
 
     // Функция обновления и компенсации масштаба
     function updateLayout() {
@@ -35,8 +38,19 @@ document.addEventListener("DOMContentLoaded", function () {
         // Сохраняем текущую позицию скролла для компенсации прыжка
         const currentScrollY = window.scrollY;
 
-        // Различаем режим "Только текст" (Firefox) и обычный зум страницы
-        const isTextOnlyZoom = Math.abs(textZoomFactor - 1) > 0.05;
+        // Различаем режим "Только текст" (Firefox) и обычный зум страницы стабильно
+        const targetMode = Math.abs(textZoomFactor - 1) > 0.05;
+        if (!isInitialized) {
+            isTextOnlyZoom = targetMode;
+            isInitialized = true;
+        } else if (targetMode !== isTextOnlyZoom) {
+            clearTimeout(modeTimeout);
+            modeTimeout = setTimeout(() => {
+                isTextOnlyZoom = targetMode;
+                queueUpdateLayout();
+            }, 150); // Ждем 150мс стабильности перед переключением режима
+        }
+
         const layoutZoom = isTextOnlyZoom ? 1 : browserZoom;
         const fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
 
@@ -111,18 +125,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (probe && typeof ResizeObserver !== "undefined") {
         const observer = new ResizeObserver(entries => {
             for (let entry of entries) {
-                // width = 10 * 100 * textZoomFactor = 1000 * textZoomFactor
                 const width = entry.contentRect.width;
                 if (width > 0) {
                     const textZoomFactor = width / 1000;
-                    const isTextOnlyZoom = Math.abs(textZoomFactor - 1) > 0.05;
-                    const fontCompensation = isTextOnlyZoom ? textZoomFactor : 1;
-                    
-                    if (isNeutralizerActive) {
-                        document.documentElement.style.setProperty("--text-zoom-factor", fontCompensation);
-                    }
                     if (textZoomVal) textZoomVal.textContent = textZoomFactor.toFixed(2) + "x";
-                    
                     queueUpdateLayout();
                 }
             }
