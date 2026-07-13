@@ -20,7 +20,9 @@
     <!-- Зонд для определения масштабирования текста в Firefox (Zoom Text Only) -->
     <div id="text-zoom-probe" style="position: absolute; top: -9999px; left: -9999px; font-size: 100px; width: 10em; height: 10em; opacity: 0.01; pointer-events: none;"></div>
     
-    <div id="zoomFrame">
+    <!-- Обертка для математически точного отсечения при transform: scale -->
+    <div id="zoomWrapper" style="overflow: hidden; width: 100%;">
+        <div id="zoomFrame">
         <!-- Моментальная компенсация зума и размера шрифтов до первой отрисовки (устраняет мигание верстки при загрузке) -->
         <script>
             (function() {
@@ -46,15 +48,23 @@
                 
                 // 3. Компенсация масштаба всей страницы
                 var frame = document.getElementById("zoomFrame");
+                var wrapper = document.getElementById("zoomWrapper");
                 if (frame) {
                     var inv = 1 / layoutZoom;
-                    var supportsZoom = CSS.supports && CSS.supports("zoom", "1");
                     // Компенсация через transform: scale для всех браузеров (исключает баг с min-font-size в Chromium)
                     frame.style.width = (layoutZoom * 100) + "%";
                     frame.style.minHeight = (layoutZoom * 100) + "vh";
                     frame.style.transform = "scale(" + inv + ")";
                     frame.style.transformOrigin = "top left";
                     frame.style.removeProperty("zoom");
+                    
+                    if (wrapper) {
+                        // Жестко фиксируем физическую высоту обертки по визуальной высоте фрейма.
+                        // Это полностью устраняет парадокс отсечения и бесконечных скроллбаров.
+                        var rect = frame.getBoundingClientRect();
+                        wrapper.style.height = rect.height + "px";
+                    }
+                    
                     // Показываем фрейм уже с примененным скейлом
                     frame.style.opacity = "1";
                 }
@@ -205,6 +215,7 @@
         <footer class="demo-footer-text">
             Служба поддержки vsevn.ru — Кабинет модератора объявлений. Разработано на чистом HTML, CSS, JS.
         </footer>
+    </div>
     </div>
 
     <script src="script.js"></script>

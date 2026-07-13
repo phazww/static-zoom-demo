@@ -45,9 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.documentElement.style.setProperty("--text-zoom-factor", fontCompensation);
 
             const inv = 1 / layoutZoom;
-            
-            // Проверяем поддержку CSS zoom (Firefox не поддерживает, остальные да)
-            const supportsZoom = CSS.supports && CSS.supports("zoom", "1");
+            const wrapper = document.getElementById("zoomWrapper");
             
             // Компенсация через transform: scale для всех браузеров (исключает баг с min-font-size в Chromium)
             frame.style.width = (layoutZoom * 100) + "%";
@@ -55,6 +53,12 @@ document.addEventListener("DOMContentLoaded", function () {
             frame.style.transform = "scale(" + inv + ")";
             frame.style.transformOrigin = "top left";
             frame.style.removeProperty("zoom");
+            
+            if (wrapper) {
+                // Жестко фиксируем физическую высоту обертки по визуальной высоте фрейма
+                const rect = frame.getBoundingClientRect();
+                wrapper.style.height = rect.height + "px";
+            }
             
             // Стабилизируем скролл на основе масштаба верстки
             if (Math.abs(layoutZoom - lastLayoutZoom) > 0.01) {
