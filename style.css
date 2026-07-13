@@ -41,6 +41,10 @@ body {
     min-height: 100%;
     overflow-x: hidden;
     background-color: var(--color-bg-base);
+    text-rendering: geometricPrecision;
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Фрейм нейтрализации зума (растянут на всю ширину без обрезки полей) */
